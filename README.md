@@ -27,5 +27,7 @@ yarn install
 
 Give a ⭐️ if this project helped you!
 
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/BucketProtocol)_
+## 📝 License
+
+Copyright © 2023 [BucketProtocol](https://github.com/BucketProtocol).<br />
+This project is GPLv3 licensed.
