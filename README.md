@@ -3,8 +3,8 @@
   <a href="#" target="_blank">
     <img alt="License: mit" src="https://img.shields.io/badge/License-mit-yellow.svg" />
   </a>
-  <a href="https://twitter.com/BucketProtocol\_" target="_blank">
-    <img alt="Twitter: BucketProtocol\_" src="https://img.shields.io/twitter/follow/BucketProtocol\_.svg?style=social" />
+  <a href="https://twitter.com/BucketProtocol_" target="_blank">
+    <img alt="Twitter: BucketProtocol_" src="https://img.shields.io/twitter/follow/BucketProtocol_.svg?style=social" />
   </a>
 </p>
 
