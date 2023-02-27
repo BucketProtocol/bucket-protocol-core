@@ -26,8 +26,3 @@ yarn install
 ## Show your support
 
 Give a ⭐️ if this project helped you!
-
-## 📝 License
-
-Copyright © 2023 [BucketProtocol](https://github.com/BucketProtocol).<br />
-This project is GPLv3 licensed.
