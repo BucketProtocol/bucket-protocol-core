@@ -1,13 +1,33 @@
-# Sample Hardhat Project
+<h1 align="center">Welcome to BucketProtocol 👋</h1>
+<p>
+  <a href="#" target="_blank">
+    <img alt="License: mit" src="https://img.shields.io/badge/License-mit-yellow.svg" />
+  </a>
+  <a href="https://twitter.com/BucketProtocol_" target="_blank">
+    <img alt="Twitter: BucketProtocol_" src="https://img.shields.io/twitter/follow/BucketProtocol_.svg?style=social" />
+  </a>
+</p>
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+> This is a mixer based on EVM architecture, from Arbitrum
 
-Try running some of the following tasks:
+## Install
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+```sh
+yarn install
 ```
+
+## Author
+
+👤 **BucketProtocol**
+
+* Twitter: [@BucketProtocol\_](https://twitter.com/BucketProtocol\_)
+* Github: [@BucketProtocol](https://github.com/BucketProtocol)
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+## 📝 License
+
+Copyright © 2023 [BucketProtocol](https://github.com/BucketProtocol).<br />
+This project is GPLv3 licensed.
