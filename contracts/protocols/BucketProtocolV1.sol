@@ -20,10 +20,10 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
     // --------- permissions end ---------
 
     // --------- work start ---------
-    mapping(string => uint256) private _ethDeposit;
-    mapping(string => mapping(address => uint256)) private _tokenDeposit;
+    mapping(bytes32 => uint256) private _ethDeposit;
+    mapping(bytes32 => mapping(address => uint256)) private _tokenDeposit;
     mapping(address => mapping(address => bool)) private _tokenApproves;
-    mapping(address => string[]) private _withdrawCodeList;
+    mapping(address => bytes32[]) private _withdrawCodeList;
 
     // --------- work start ---------
 
@@ -31,23 +31,34 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         _owner = msg.sender;
     }
 
-    function deposit(uint256 amount) public returns (string memory, uint256) {
+    function deposit() public payable returns (bytes32, uint256) {
+        uint256 amount=msg.value;
         require(address(msg.sender) != address(0), "error address");
-        require(amount != 0, "error amount");
+        require(msg.value != 0, "error amount");
         // create withdraw code
-        string memory code = _crtWithdrawCode();
+        bytes32 code = _crtWithdrawCode(msg.sender);
+        amount=_tax(msg.sender,amount);
         _ethDeposit[code] = _ethDeposit[code].add(amount);
         return (code, _ethDeposit[code]);
     }
 
     function deposit(string memory withdrawCode, uint256 amount)
         public
-        returns (string memory, uint256)
-    {}
+        payable
+        returns (bytes32, uint256)
+    {
+        uint256 amount=msg.value;
+        require(address(msg.sender) != address(0), "error address");
+        require(msg.value != 0, "error amount");
+        amount=_tax(msg.sender,amount);
+        bytes32 code=keccak256(abi.encodePacked(withdrawCode));
+        _ethDeposit[code] = _ethDeposit[code].add(amount);
+        return (keccak256(abi.encodePacked(withdrawCode)),amount);
+    }
 
     function deposit(address tokenAddr, uint256 amount)
         public
-        returns (string memory, uint256)
+        returns (bytes32, uint256)
     {
         require(address(msg.sender) != address(0), "error address");
         require(amount != 0, "error amount");
@@ -60,8 +71,11 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         }
         // deposit
         _token.transferFrom(msg.sender, address(this), amount);
+        123123
+        
         // create withdraw code
-        string memory code = _crtWithdrawCode();
+        bytes32 code = _crtWithdrawCode(msg.sender);
+        amount = _tax(msg.sender,_token,amount)
         _tokenDeposit[code][tokenAddr] = amount;
         return (code, amount);
     }
@@ -70,7 +84,7 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         string memory withdrawCode,
         address tokenAddr,
         uint256 amount
-    ) public returns (string memory, uint256) {}
+    ) public returns (bytes32, uint256) {}
 
     function withdraw(string memory withdrawCode, uint256 amount)
         public
@@ -115,23 +129,40 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
     }
 
     function setTax(uint256 tax) public onlyOwner returns (uint256) {
-        require(
-            Math.max(tax, MAX_TAX) == MAX_TAX,
-            "Exceeded the maximum tax value"
-        );
+        require(Math.max(tax, MAX_TAX) == MAX_TAX,"Exceeded the maximum tax value");
         _TAX = tax;
         return _TAX;
     }
 
-    function _crtWithdrawCode() private pure returns (string memory) {
-        return "qiwuyeriqwuiehui231hiu4iuewnifuqnweirquiwe";
+    function _tax(address sender,uint256 amount) private returns (uint256) {
+        uint256 tax = amount.mul(_TAX).div(100);
+        amount = amount.sub(tax);
+        require(payable(address(this)).send(tax),"send error");
+        return amount;
+    }
+
+    function _tax(address sender,IERC20 token,uint256 amount) private returns (uint256) {
+        uint256 tax = amount.mul(2).div(100);
+        amount = amount.sub(tax);
+        token.transferFrom(sender,address(this),tax);
+        return amount;
+    }
+
+    function _crtWithdrawCode(address sender) private pure returns (bytes32) {
+        uint256 r = uint256(
+            keccak256(
+                abi.encodePacked(block.prevrandao, block.timestamp, sender)
+            )
+        ) % (block.timestamp);
+        bytes32 withdrawCode=keccak256(abi.encodePacked(r));
+        return withdrawCode;
     }
 
     function _verifyWithdrawCode(string memory withdrawCode)
         private
         pure
         returns (bool)
-    {
+    {   
         return true;
     }
 }
