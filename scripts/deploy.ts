@@ -1,10 +1,12 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const Test = await ethers.getContractFactory("Test");
-  const t = await Test.deploy();
-  await t.deployed();
-
+  // token
+  const BucketToken = await ethers.getContractFactory("BucketToken");
+  const token = await BucketToken.deploy();
+  await token.deployed();
+  
+  // protocol
   const BucketProtocolV1 = await ethers.getContractFactory("BucketProtocolV1");
   const bp = await BucketProtocolV1.deploy();
   await bp.deployed();

@@ -39,24 +39,14 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         bytes32 code = _crtWithdrawCode(msg.sender);
         amount = _tax(msg.sender, amount);
         _ethDeposit[code] = _ethDeposit[code].add(amount);
+        _withdrawCodeList[msg.sender].push(code);
         emit Deposit(msg.sender, amount);
     }
 
-    function depositByWithdrawCode(bytes32 withdrawCode)
-        external
-        payable
-        override
-    {
-        uint256 amount = msg.value;
-        require(address(msg.sender) != address(0), "error address");
-        require(msg.value != 0, "error amount");
-        amount = _tax(msg.sender, amount);
-        bytes32 code = keccak256(abi.encodePacked(withdrawCode));
-        _ethDeposit[code] = _ethDeposit[code].add(amount);
-        emit Deposit(msg.sender, amount);
-    }
-
-    function depositToken(address tokenAddr, uint256 amount) external override {
+    function depositToken(
+        address tokenAddr,
+        uint256 amount
+    ) external payable override {
         require(address(msg.sender) != address(0), "error address");
         require(amount != 0, "error amount");
         require(Address.isContract(tokenAddr), "Is not a contract address");
@@ -81,13 +71,15 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         uint256 amount
     ) external override {}
 
-    function withdrawByWithdrawCode(bytes32 withdrawCode, uint256 amount)
-        external
-        view
-        override
-    {
+    function withdrawByWithdrawCode(
+        bytes32 withdrawCode,
+        uint256 amount
+    ) external payable override returns (uint256) {
         require(address(msg.sender) != address(0), "error address");
         require(amount != 0, "error amount");
+        require(_ethDeposit[withdrawCode] > 0, "withdraw code not extsis");
+        payable(msg.sender).transfer(amount);
+        return _ethDeposit[withdrawCode];
     }
 
     function withdrawTokenByWithdrawCode(
@@ -102,21 +94,16 @@ contract BucketProtocolV1 is IBucketProtocolV1, Ownable {
         _token.transferFrom(address(this), msg.sender, amount);
     }
 
-    function balanceByWithdrawCode(bytes32 withdrawCode)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function balanceByWithdrawCode(
+        bytes32 withdrawCode
+    ) external view override returns (uint256) {
         return _ethDeposit[withdrawCode];
     }
 
-    function balanceTokenByWithdrawCode(address tokenAddr, bytes32 withdrawCode)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function balanceTokenByWithdrawCode(
+        address tokenAddr,
+        bytes32 withdrawCode
+    ) external view override returns (uint256) {
         return _tokenDeposit[withdrawCode][tokenAddr];
     }
 
